@@ -1,4 +1,4 @@
-name: Build with EESSI buildenv module
+name: Build with EESSI-extend
 on: [push, pull_request]
 jobs:
   ubuntu-minimal:
@@ -11,12 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: eessi/github-action-eessi@v3
-    - name: Test building with EESSI
+    - name: Test building with EESSI-extend
       run: |
-        module load HDF5 CMake buildenv
-        mkdir build
-        cd build/
-        cmake ..
-        make -j
-        ctest --output-on-failure --verbose
+        module load EESSI-extend
+        unset EASYBUILD_DEBUG
+        eb --logtostdout --software-commit=${GITHUB_SHA} easybuild/cicd-demo.eb
       shell: bash
+
