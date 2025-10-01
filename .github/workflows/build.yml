@@ -1,0 +1,26 @@
+name: Build with EESSI buildenv module
+on: [push, pull_request]
+jobs:
+  ubuntu-minimal:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-24.04-arm
+          - ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - uses: eessi/github-action-eessi@v3
+    - name: Print event type
+      run: echo "This workflow was triggered by a $GITHUB_EVENT_NAME event"
+    - name: Print commit SHA
+      run: echo "The commit SHA is $GITHUB_SHA"
+    - name: Test building with EESSI
+      run: |
+        module load HDF5 CMake buildenv
+        mkdir build
+        cd build/
+        cmake ..
+        make -j
+        ctest --output-on-failure --verbose
+      shell: bash
